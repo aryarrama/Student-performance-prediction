@@ -1,18 +1,20 @@
 from flask import Flask, request, jsonify
 import joblib
+import os
 
-# Inisialisasi aplikasi Flask
 app = Flask(__name__)
 
-# Memuat model yang sudah disimpan
-joblib_model = joblib.load("gbr_model.joblib")
+# Mengambil lokasi folder tempat file Python berada
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+# Memuat model dari folder yang sama dengan file Python
+model_path = os.path.join(BASE_DIR, "gbr_model.joblib")
+joblib_model = joblib.load(model_path)
 
 
 @app.route("/predict", methods=["POST"])
 def predict():
     data = request.json["data"]
-
-    # Melakukan prediksi
     prediction = joblib_model.predict(data)
 
     return jsonify({"prediction": prediction.tolist()})
